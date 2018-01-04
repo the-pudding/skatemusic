@@ -94,6 +94,7 @@ function makeTable(data, columns) {
       .on("keyup", function() { // filter according to key pressed 
         var searched_data = data,
             text = this.value.trim();
+            console.log(text);
 
         var searchResults = searched_data.map(function(r) {
           var regex = new RegExp("^" + text + ".*", "i");
@@ -116,50 +117,67 @@ function makeTable(data, columns) {
 
         // flatten array 
 		searched_data = [].concat.apply([], searched_data);
+		console.log(searched_data);
 
 		// data bind with new data
 		rows = rows.data(searched_data, function(d){ return d.genre2});
-
-		console.log(rows);
-		// .selectAll("tr")
-		//   .data(searched_data, function(d){ return d.id; })
 		
-      //   // enter the rows
-      //   rows.enter()
-      //    .append("tr");
-         
-      //   // enter td's in each row
-      //   row_entries = rows.selectAll("td")
-      //       .data(function(d) { 
-      //         var arr = [];
-      //         for (var k in d) {
-      //           if (d.hasOwnProperty(k)) {
-		    //       arr.push(d[k]);
-      //           }
-      //         }
-      //         return [arr[3],arr[1],arr[2],arr[0]];
-      //       })
-      //     .enter()
-      //       .append("td") 
+		// rows = tbody.selectAll('div')
+	 //  .data(searched_data)
 
-      //   // draw row entries with no anchor 
-      //   row_entries_no_anchor = row_entries.filter(function(d) {
-      //     return (/https?:\/\//.test(d) == false)
-      //   })
-      //   row_entries_no_anchor.text(function(d) { return d; })
 
-      //   // draw row entries with anchor
-      //   row_entries_with_anchor = row_entries.filter(function(d) {
-      //     return (/https?:\/\//.test(d) == true)  
-      //   })
-      //   row_entries_with_anchor
-      //     .append("a")
-      //     .attr("href", function(d) { return d; })
-      //     .attr("target", "_blank")
-      //   .text(function(d) { return d; })
+		// rows = tbody.selectAll(".tr")
+		//   .data(searched_data, function(d){ return d.genre2; })
+		 // console.log(rows);
+		
+        // enter the rows
+        rows.enter()
+         .append('div')
+	  	 .attr('class', 'tr');
+
+
+        // enter td's in each row
+        row_entries = rows.selectAll(".td")
+            .data(function(d) { 
+              var arr = [];
+              for (var k in d) {
+                if (d.hasOwnProperty(k)) {
+		          arr.push(d[k]);
+                }
+              }
+              // console.log(arr);
+              // return [arr[3],arr[1],arr[2],arr[0]];
+              return arr
+            })
+          .enter()
+          .append('div')
+		  .attr('class', 'td')
+		  .attr('style', 'justify-content: left;')
+		  .text(function (d) { return d.value; })
+		  .append('svg')
+		  .attr('height', 10)
+		  .attr('width', 100)
+		  .append("rect")
+	      .attr("height", 8)
+	      .attr('width', function(d) {
+	      	if (isNaN(d.value)) {
+	      		return 0;
+	      	} else {
+	      		if (d.col == 'percent'){ 
+	      			return barScalePercent(d.value);
+	      		} else if (d.col == 'art_count'){
+	      			return barScaleArtist(d.value);
+	      		} else if (d.col == 'count') {
+	      			return barScaleGenre(d.value);
+	      		} else {
+	      			return 0;
+	      		};
+	      	};
+	      })
+	      .attr('fill', 'coral');
         
-      //   // exit
-      //   rows.exit().remove();
+        // exit
+        rows.exit().remove();
       // })
 
         });
