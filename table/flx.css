@@ -64,3 +64,11 @@
     color: #2b8cbe;
     /*margin-left: 200px;*/
 }
+
+.SearchBar {
+  font-weight: bold;
+  font-size: 90%;
+  margin-bottom: 10px;
+  font-family: Gill Sans;
+  color: #2b8cbe;
+}
