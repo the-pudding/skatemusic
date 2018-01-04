@@ -121,14 +121,8 @@ function makeTable(data, columns) {
 
 		// data bind with new data
 		rows = rows.data(searched_data, function(d){ return d.genre2});
-		
-		// rows = tbody.selectAll('div')
-	 //  .data(searched_data)
+		console.log(rows);
 
-
-		// rows = tbody.selectAll(".tr")
-		//   .data(searched_data, function(d){ return d.genre2; })
-		 // console.log(rows);
 		
         // enter the rows
         rows.enter()
@@ -137,20 +131,14 @@ function makeTable(data, columns) {
 
 
         // enter td's in each row
-        row_entries = rows.selectAll(".td")
-            .data(function(d) { 
-              var arr = [];
-              for (var k in d) {
-                if (d.hasOwnProperty(k)) {
-		          arr.push(d[k]);
-                }
-              }
-              // console.log(arr);
-              // return [arr[3],arr[1],arr[2],arr[0]];
-              return arr
-            })
-          .enter()
-          .append('div')
+        var cells = rows.selectAll('div')
+		  .data(function (row) {
+		    return dataFeatures.map(function (columnName) {
+		      return {col: columnName, value: row[columnName]};
+		    });
+		  })
+		  .enter()
+		  .append('div')
 		  .attr('class', 'td')
 		  .attr('style', 'justify-content: left;')
 		  .text(function (d) { return d.value; })
