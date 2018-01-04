@@ -75,9 +75,13 @@ var activity = function(d) { return d.key; },
 
 var area = d3.area()
     .x(xValue)
-    .y1(yValue);
+    .y1(yValue)
+    .curve(d3.curveMonotoneX)
+    ;
 
-var line = area.lineY1();
+var line = area.lineY1()
+  .curve(d3.curveMonotoneX)
+  ;
 
 function parseTime(offset) {
     var date = new Date(2014, 0, 1); // chose an arbitrary day
@@ -95,12 +99,30 @@ function row(d) {
 d3.tsv('data.tsv', row, function(error, dataFlat) {
     if (error) throw error;
 
+
     // Sort by time
     dataFlat.sort(function(a, b) { return a.time - b.time; });
     var data = d3.nest()
         .key(function(d) { return d.activity; })
         .entries(dataFlat);
-    
+
+    var yearArray = d3.range(1989,2018,1)
+
+    for (var genre in data){
+      var yearsPresent = data[genre].values.map(function(d){
+        return +d.time;
+      });
+      for (var year in yearArray){
+        if(yearsPresent.indexOf(yearArray[year]) == -1){
+          data[genre].values.push({activity:data[genre].key,time:yearArray[year],value:0})
+        }
+      }
+      data[genre].values = data[genre].values.sort(function(a,b){
+        return +a.time - +b.time;
+      })
+    }
+
+    console.log(data);
     // Sort activities by peak activity time
     function peakTime(d) {
         var i = d3.scan(d.values, function(a, b) { return y(b) - y(a); });
@@ -117,7 +139,7 @@ d3.tsv('data.tsv', row, function(error, dataFlat) {
     yScale
         .domain(d3.extent(dataFlat, y))
         .range([areaChartHeight, 0]);
-    
+
     area.y0(yScale(0));
 
     // svg.append('g').attr('class', 'axis axis--x')
@@ -139,7 +161,7 @@ d3.tsv('data.tsv', row, function(error, dataFlat) {
     gActivity.append('path').attr('class', 'area')
         .datum(function(d) { return d.values; })
         .attr('d', area);
-    
+
     gActivity.append('path').attr('class', 'line')
         .datum(function(d) { return d.values; })
         .attr('d', line);
