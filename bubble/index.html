@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-84472984-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-84472984-1');
+</script>
+  <meta charset="utf-8">
+  <title>Data-Driven Skate Video Music</title>
+  <meta name="description" content="Jenkem Data-Driven Soundtrack Analysis">
+  <meta name="author" content="Jared Wilber">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/artist_bubble.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.5/paper/bootstrap.min.css" media="screen" rel="stylesheet">
+  <!-- <link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css"> -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <style>
+  svg {
+    display: block;
+    margin: 0 auto;
+}
+
+  body {
+    font-family: Helvetica, sans serif;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .chart {
+    margin: 40px;
+    width: 620px;
+  }
+
+  .label {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  .legend {
+    padding-bottom: 7px;
+  }
+
+  .legend_item {
+    display: inline-block;
+    padding-right: 10px;
+    margin-bottom: 2px;
+  }
+
+  .legend_item_icon, .legend_item_text {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+  }
+
+  .legend_item_icon {
+    margin-right: 15px;
+    height: 15px;
+    width: 15px;
+  }
+</style>
+
+</head>
+<body>
+  <div class="container">
+
+    <div id="toolbar">
+      <!-- <a id="all" class="button">Artists</a> -->
+      <a id="genre" class="button active">By Genre</a>
+      <a id="use" class="button">By Popularity</a>
+    </div>
+    <div id="vis"></div>
+
+
+
+    <div class="chart"></div>
+
+
+  </div>
+
+  <script src="lib/d3.js"></script>
+  <script src="src/tooltip.js"></script>
+  <script src="src/text3.js"></script>
+</body>
+</html>
