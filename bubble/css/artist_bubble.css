@@ -35,11 +35,11 @@ h2 {
   width: 1000px;
 }
 
-.label {
-  font-size: 4px;
-  margin-bottom: 2px;
-  font-weight: bold;
-  text-align: left;
+.bubble-label {
+  font-size: 7px;
+  /*font-weight: bold;*/
+  text-align: center;
+  font-family: Gill Sans
 }
 
 .legend {

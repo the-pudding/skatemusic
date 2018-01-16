@@ -2,12 +2,19 @@
 
 Code to create genre bubble chart
 
-TODO
+TODO:
+- Figure out text overlapping
+- Add search box
+- Rewrite in d3v4?
 
 */
 
 
 function bubbleChart() {
+
+  // var searchBar = d3.select('body').append("div").attr("class", "SearchBar");
+  var searchBar = d3.select('.SearchBar');
+
   var margin = {top: 20, bottom: 20, left: 20, right: 20};
   var width = 1100 - margin.left - margin.right;
   var height = 650 - margin.top - margin.bottom;
@@ -97,7 +104,7 @@ function bubbleChart() {
   // Scale for node sizes
   var radiusScale = d3.scale.pow()
     .exponent(1.8)  // exponent makes the graph 'tighter'
-    .range([3.5, 70]);
+    .range([8, 62]);
 
   
    // Functiont to convert csv data to array of node objects
@@ -151,19 +158,18 @@ function bubbleChart() {
       .attr('r', 0)
       .attr('fill', function (d) { return bubbleColor(d.genre); })
       .attr('stroke', function (d) { return d3.rgb(bubbleColor(d.genre)).darker(); })
-      .attr('stroke-width', 5)
+      .attr('stroke-width', 0.5)
       .on('mouseover', showDetail)
       .on('mouseout', hideDetail)
       .call(force.drag);
 
-    text = svg.selectAll("text.label")    
+    text = svg.selectAll("text.bubble-label")    
      .data(nodes, function (d) { return d.id; })
         .enter()
         .append("text")
-        .attr("class", "label")
-        // .text(function(d) { return d.name; });
+        .attr("class", "bubble-label")
         .text(function(d) {
-          if (d.group == 'low') {
+          if (d.value < 17) {
             return "";
           } else {
             return d.name;
@@ -179,7 +185,76 @@ function bubbleChart() {
 
     // Set initial layout to genre group.
     splitBubblesGenre();
+
+// Search
+  searchBar.append("p")
+      .attr("class", "SearchBar")
+      .text("Search By Title:");
+
   };
+
+  d3.select(".SearchBar")
+    .append("input")
+      .attr("class", "SearchBar")
+      .attr("id", "search")
+      .attr("type", "text")
+      .attr("placeholder", "Search...");
+
+  d3.select("#search")
+      .on("keyup", function(event) { 
+
+        var searched_data = nodes,
+            text = this.value.trim();
+            console.log(text);
+        if (text != "" & text != "none") {
+
+            var searchResults = searched_data.map(function(r) {
+            var regex = new RegExp("^" + text + ".*", "i");
+            if (regex.test(r.name)) { // if there are any results
+              return regex.exec(r.name)[0]; // return them to searchResults
+            };
+          });
+
+          // filter blank entries from searchResults
+          searchResults = searchResults.filter(function(r){ 
+            return r != undefined;
+          });
+          console.log(searchResults);
+          // filter dataset with searchResults
+          searched_data = searchResults.map(function(r) {
+             return nodes.filter(function(p) {
+              return p.name.indexOf(r) != -1;
+            });
+          });
+
+          // flatten array 
+          searched_data = [].concat.apply([], searched_data); // This finds the data we want
+
+            // data bind with new data
+          selbubbles = bubbles.data(searched_data, function(d){ return d.name});
+
+          // Style select nodes
+          selbubbles
+            .style('opacity', .75)
+            .attr('stroke-width', 3)
+            .attr('stroke', 'black');
+
+        } else {
+          d3.selectAll('.bubble')
+            .style("opacity", 1)
+            .attr('stroke-width', .5)
+            .attr('stroke', function (d) { return d3.rgb(bubbleColor(d.genre)).darker(); });
+        }
+
+        selbubbles
+        .exit()
+            .style("opacity", 1)
+            .attr('stroke-width', .5)
+            .attr('stroke', function (d) { return d3.rgb(bubbleColor(d.genre)).darker(); });
+          
+      
+
+      });
 
 
   function splitBubblesUse() {
@@ -191,7 +266,7 @@ function bubbleChart() {
         .attr('cx', function (d) {return d.x; })
         .attr('cy', function (d) {return d.y; });
 
-      text.attr("transform", function(d){ return "translate("+d.x+","+d.y+")"; });
+      text.attr("transform", function(d){ return "translate("+(d.x - 10)+","+d.y+")"; });
 
     });
 
@@ -207,7 +282,7 @@ function bubbleChart() {
         .attr('cx', function (d) {return d.x; })
         .attr('cy', function (d) {return d.y; });
 
-    text.attr("transform", function(d){ return "translate("+d.x+","+d.y+")"; });
+    text.attr("transform", function(d){ return "translate("+(d.x - 10) +","+d.y+")"; });
 
     });
 
@@ -312,7 +387,7 @@ function bubbleChart() {
     // reset outline
     d3.select(this)
       .attr('stroke', d3.rgb(bubbleColor(d.genre)).darker())
-      .attr('stroke-width', 5)
+      .attr('stroke-width', .5)
       .attr('fill', function (d) { return bubbleColor(d.genre); })
       .attr('r', function (d) { return d.radius; });
 
@@ -382,6 +457,7 @@ function setupButtons() {
       myBubbleChart.toggleDisplay(buttonId);
     });
 }
+
 
 // Load the data.
 d3.csv('data/new_small.csv', display);
